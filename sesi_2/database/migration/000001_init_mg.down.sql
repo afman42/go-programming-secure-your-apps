@@ -1,2 +1,3 @@
-drop table users;
-drop table products;
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS products;
+DROP TYPE role_user CASCADE;

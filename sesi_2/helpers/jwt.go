@@ -6,13 +6,20 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
+type RoleUserClaims struct {
+	jwt.StandardClaims
+	ID    uint           `json:"id,omitempty"`
+	Email string         `json:"email,omitempty"`
+	Role  enums.RoleUser `json:"role,omitempty"`
+}
+
 var secretKey = "abc"
 
-func GenerateToken(id int, email string, role enums.RoleUser) string {
-	claims := jwt.MapClaims{
-		"id":    id,
-		"email": email,
-		"role":  role,
+func GenerateToken(id uint, email string, role enums.RoleUser) string {
+	claims := RoleUserClaims{
+		ID:    id,
+		Email: email,
+		Role:  role,
 	}
 
 	parseToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

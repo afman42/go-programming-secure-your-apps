@@ -6,8 +6,8 @@ CREATE TABLE users
     email varchar(191) not null,
     password varchar(191) not null,
     role role_user not null,
-    created_at timestamp not null,
-    updated_at timestamp not null
+    created_at timestamp WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE products
@@ -16,8 +16,8 @@ CREATE TABLE products
     title varchar(191) not null,
     description varchar(191) not null,
     user_id serial not null,
-    created_at timestamp not null,
-    updated_at timestamp not null
+    created_at timestamp WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 alter table products add foreign key (user_id) references users (id);

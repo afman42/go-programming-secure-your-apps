@@ -8,6 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// https://github.com/dgrijalva/jwt-go/issues/403
+
 func VerifyToken(c *gin.Context) (interface{}, error) {
 	errResponse := errors.New("sign in to proceed")
 	headerToken := c.Request.Header.Get("Authorization")
@@ -19,16 +21,17 @@ func VerifyToken(c *gin.Context) (interface{}, error) {
 
 	stringToken := strings.Split(headerToken, " ")[1]
 
-	token, _ := jwt.Parse(stringToken, func(t *jwt.Token) (interface{}, error) {
+	token, _ := jwt.ParseWithClaims(stringToken, &RoleUserClaims{}, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errResponse
 		}
 		return []byte(secretKey), nil
 	})
 
-	if _, ok := token.Claims.(*jwt.MapClaims); !ok && !token.Valid {
+	// fmt.Println(token.Claims.(*RoleUserClaims))
+	if _, ok := token.Claims.(*RoleUserClaims); !ok && !token.Valid {
 		return nil, errResponse
 	}
 
-	return token.Claims.(jwt.MapClaims), nil
+	return token.Claims.(*RoleUserClaims), nil
 }

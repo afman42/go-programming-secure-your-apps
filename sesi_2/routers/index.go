@@ -2,10 +2,10 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
+	"github.com/jackc/pgx/v5"
 )
 
-func LoadRouters(db *gorm.DB) *gin.Engine {
+func LoadRouters(db *pgx.Conn) *gin.Engine {
 	r := gin.Default()
 
 	r.Use(func(ctx *gin.Context) {

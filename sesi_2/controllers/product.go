@@ -10,7 +10,17 @@ import (
 )
 
 func AllProducts(c *gin.Context) {
+	models, err := models.AllProducts(c)
 
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusOK, gin.H{
+			"message": "record not found",
+			"data":    models,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, models)
 }
 
 func GetByIdProduct(c *gin.Context) {

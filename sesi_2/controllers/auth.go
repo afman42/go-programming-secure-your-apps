@@ -3,54 +3,52 @@ package controllers
 import (
 	"net/http"
 	"sesi_2_authentication_middleware/helpers"
+	"sesi_2_authentication_middleware/input"
 	"sesi_2_authentication_middleware/models"
 
-	"github.com/asaskevich/govalidator"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 func UserRegister(c *gin.Context) {
-	db := c.MustGet("db").(*gorm.DB)
-	User := models.User{}
-	c.ShouldBindJSON(&User)
+	inputRegister := input.RegisterUser{}
 
-	// fmt.Println(User.Password)
-	err := db.Debug().Create(&User).Error
+	if err := c.ShouldBindJSON(&inputRegister); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"errors": helpers.FormatValidationError(err),
+		})
+		return
+	}
+
+	user, err := models.RegisterUser(inputRegister, c)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error":   "Bad Request",
-			"message": helpers.FormatResponseValidation(err.Error()),
+			"message": err.Error(),
 		})
 		return
 	}
 
 	c.JSON(http.StatusCreated, gin.H{
-		"id":    User.ID,
-		"email": User.Email,
+		"id":    user.ID,
+		"email": user.Email,
 	})
 }
 
 func UserLogin(c *gin.Context) {
-	db := c.MustGet("db").(*gorm.DB)
-	User := models.User{}
-	LoginUser := models.LoginUser{}
+	inputUser := input.LoginUser{}
 	password := ""
 
-	c.ShouldBindJSON(&LoginUser)
-	_, err := govalidator.ValidateStruct(LoginUser)
-	if err != nil {
-		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"error":   "Unprocessableentity",
-			"message": helpers.FormatResponseValidation(err.Error()),
+	if err := c.ShouldBindJSON(&inputUser); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"errors": helpers.FormatValidationError(err),
 		})
 		return
 	}
 
-	password = LoginUser.Password
+	password = inputUser.Password
 
-	err = db.Debug().First(&User, "email = ?", LoginUser.Email).Error
+	user, err := models.LoginUser(inputUser, c)
 
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
@@ -60,17 +58,17 @@ func UserLogin(c *gin.Context) {
 		return
 	}
 
-	comparePass := helpers.CompareHash([]byte(User.Password), []byte(password))
+	comparePass := helpers.CompareHash([]byte(user.Password), []byte(password))
 
 	if !comparePass {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"error":   "Unauthorized",
-			"message": "invalida email or password",
+			"message": "Password not same",
 		})
 		return
 	}
 
-	token := helpers.GenerateToken(User.ID, User.Email, User.Role)
+	token := helpers.GenerateToken(user.ID, user.Email, user.Role)
 
 	c.JSON(http.StatusOK, gin.H{
 		"token": token,

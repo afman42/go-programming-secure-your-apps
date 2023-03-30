@@ -1,11 +1,11 @@
 package database
 
 import (
+	"context"
 	"fmt"
-	"log"
+	"os"
 
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+	"github.com/jackc/pgx/v5"
 )
 
 var (
@@ -16,14 +16,13 @@ var (
 	dbName   = "postgres"
 )
 
-func LoadDB() *gorm.DB {
+func LoadDB() *pgx.Conn {
 	config := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", host, user, password, dbName, dbPort)
-	dsn := config
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	conn, err := pgx.Connect(context.Background(), config)
 	if err != nil {
-		log.Fatal("error connecting to database :", err)
+		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+		os.Exit(1)
 	}
-	fmt.Println("successfull connected to database")
-	// db.Debug().AutoMigrate(models.User{}, models.Product{})
-	return db
+	fmt.Println("Successfull connected database")
+	return conn
 }

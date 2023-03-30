@@ -13,14 +13,14 @@ func SetupProductRouters(r *gin.Engine) {
 		products.Use(middlewares.Authentication())
 
 		productAdminRouter := products.Group("/admin")
-		productAdminRouter.GET("/:productId", middlewares.ProductAuthentication(), controllers.GetByIdProduct)
-		productAdminRouter.GET("/", middlewares.ProductAuthentication(), controllers.AllProducts)
-		productAdminRouter.POST("/", middlewares.ProductAuthentication(), controllers.CreateProducts)
-		productAdminRouter.PUT("/:productId", middlewares.ProductAuthentication(), controllers.EditProduct)
+		productAdminRouter.GET("/", controllers.AllProducts)
+		productAdminRouter.GET("/:productId", controllers.GetByIdProduct)
+		productAdminRouter.POST("/", controllers.CreateProducts)
+		productAdminRouter.PUT("/:productId", controllers.EditProduct)
 
 		productUserRouter := products.Group("/user")
 		productUserRouter.GET("/:productId", middlewares.ProductAuthentication(), controllers.GetByIdProduct)
-		productUserRouter.GET("/", middlewares.ProductAuthentication(), controllers.AllProducts)
-		productUserRouter.POST("/create", middlewares.ProductAuthentication(), controllers.CreateProducts)
+		// productUserRouter.GET("/", middlewares.ProductAuthentication(), controllers.AllProducts)
+		productUserRouter.POST("/", middlewares.ProductAuthentication(), controllers.CreateProducts)
 	}
 }
