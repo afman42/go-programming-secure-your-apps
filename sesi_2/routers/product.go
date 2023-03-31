@@ -20,8 +20,8 @@ func SetupProductRouters(r *gin.Engine) {
 		productAdminRouter.DELETE("/:productID", controllers.DeleteProduct)
 
 		productUserRouter := products.Group("/user")
-		productUserRouter.GET("/:productId", middlewares.ProductAuthentication(), controllers.GetByIdProduct)
-		productUserRouter.GET("/", controllers.AllProducts)
+		productUserRouter.GET("/:productID", middlewares.ProductAuthentication(), controllers.GetByIdProduct)
+		productUserRouter.GET("/", controllers.AllUserByProducts)
 		productUserRouter.POST("/", controllers.CreateProducts)
 	}
 }

@@ -41,7 +41,7 @@ func Authentication() gin.HandlerFunc {
 func ProductAuthentication() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		db := c.MustGet("db").(*pgx.Conn)
-		productId, err := strconv.Atoi(c.Param("productId"))
+		productId, err := strconv.Atoi(c.Param("productID"))
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 				"error":    "bad request",
@@ -57,8 +57,9 @@ func ProductAuthentication() gin.HandlerFunc {
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
-				"error":   "Data Not Found",
-				"message": "Data does'nt exist",
+				"error":          "Data Not Found",
+				"message":        "Data does'nt exist",
+				"error_database": err.Error(),
 			})
 			return
 		}

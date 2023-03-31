@@ -3,7 +3,6 @@ package models
 import (
 	"context"
 	"fmt"
-	"sesi_2_authentication_middleware/enums"
 	"sesi_2_authentication_middleware/helpers"
 	"sesi_2_authentication_middleware/input"
 	"time"
@@ -20,46 +19,26 @@ type Product struct {
 }
 
 func GetOneProductByUserId(db *pgx.Conn, productID uint) (product Product, err error) {
-	query := "SELECT user_id FROM products id = $1 limit 1"
-	err = db.QueryRow(context.Background(), query, productID).Scan(&product.ID)
+	query := "SELECT user_id FROM products WHERE id = $1 limit 1"
+	err = db.QueryRow(context.Background(), query, productID).Scan(&product.UserID)
 	if err != nil {
 		return product, err
 	}
 	return product, nil
 }
 
-func AllProducts(c *gin.Context) (products []Product, err error) {
+func AllByUserIDProducts(c *gin.Context) (products []Product, err error) {
 	userData := c.MustGet("userData").(*helpers.RoleUserClaims)
+	query := "SELECT * FROM products WHERE user_id = $1"
+	rows, err := c.MustGet("db").(*pgx.Conn).Query(context.Background(), query, userData.ID)
+	return fetchAllProduct(rows, err, products)
+}
+
+func AllProducts(c *gin.Context) (products []Product, err error) {
 	query := "SELECT * FROM products"
 	rows, err := c.MustGet("db").(*pgx.Conn).Query(context.Background(), query)
-	if userData.Role == enums.User {
-		query = "SELECT * FROM products WHERE user_id = $1"
-		rows, err = c.MustGet("db").(*pgx.Conn).Query(context.Background(), query, userData.ID)
-	}
 
-	if err != nil {
-		return products, fmt.Errorf("error selecting data : %g", err)
-	}
-
-	defer rows.Close()
-
-	for rows.Next() {
-		var product = Product{}
-
-		err := rows.Scan(&product.ID, &product.Title, &product.Description, &product.UserID, &product.CreatedAt, &product.UpdatedAt)
-
-		if err != nil {
-			return products, err
-		}
-
-		products = append(products, product)
-	}
-
-	if err := rows.Err(); err != nil {
-		return products, err
-	}
-
-	return products, nil
+	return fetchAllProduct(rows, err, products)
 }
 
 func GetByIdProduct(c *gin.Context, productID uint) (product Product, err error) {
@@ -136,4 +115,30 @@ func UpdateProductByID(c *gin.Context, input input.CreateOrUpdateProduct, produc
 	}
 
 	return product, nil
+}
+
+func fetchAllProduct(rows pgx.Rows, err error, products []Product) ([]Product, error) {
+	if err != nil {
+		return products, fmt.Errorf("error selecting data : %g", err)
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var product = Product{}
+
+		err := rows.Scan(&product.ID, &product.Title, &product.Description, &product.UserID, &product.CreatedAt, &product.UpdatedAt)
+
+		if err != nil {
+			return products, err
+		}
+
+		products = append(products, product)
+	}
+
+	if err := rows.Err(); err != nil {
+		return products, err
+	}
+
+	return products, nil
 }

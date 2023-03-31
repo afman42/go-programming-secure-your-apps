@@ -10,13 +10,27 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func AllProducts(c *gin.Context) {
-	models, err := models.AllProducts(c)
-
+func AllUserByProducts(c *gin.Context) {
+	models, err := models.AllByUserIDProducts(c)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"status": "bad request",
 			"error":  err.Error(),
+			"data":   models,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, models)
+}
+
+func AllProducts(c *gin.Context) {
+	models, err := models.AllProducts(c)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"status": "bad request",
+			"error":  err.Error(),
+			"data":   models,
 		})
 		return
 	}
