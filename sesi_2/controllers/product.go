@@ -14,8 +14,9 @@ func AllProducts(c *gin.Context) {
 	models, err := models.AllProducts(c)
 
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusOK, gin.H{
-			"error": err.Error(),
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"status": "bad request",
+			"error":  err.Error(),
 		})
 		return
 	}
@@ -27,14 +28,16 @@ func GetByIdProduct(c *gin.Context) {
 	productID, err := strconv.Atoi(c.Param("productID"))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": "Invalid parameter",
+			"status": "bad request",
+			"error":  "Invalid parameter",
 		})
 		return
 	}
 	model, err := models.GetByIdProduct(c, uint(productID))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
-			"error": err.Error(),
+			"status": "not found",
+			"error":  err.Error(),
 		})
 		return
 	}
@@ -46,14 +49,23 @@ func EditProduct(c *gin.Context) {
 	inputProduct := input.CreateOrUpdateProduct{}
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": "Invalid parameter",
+			"status": "bad request",
+			"error":  "Invalid parameter",
 		})
 		return
 	}
-	GetByIdProduct(c)
+	_, err = models.GetByIdProduct(c, uint(productID))
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
+			"status": "not found",
+			"error":  err.Error(),
+		})
+		return
+	}
 
 	if err := c.ShouldBindJSON(&inputProduct); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"status": "bad request",
 			"errors": helpers.FormatValidationError(err),
 		})
 		return
@@ -61,7 +73,10 @@ func EditProduct(c *gin.Context) {
 	model, err := models.UpdateProductByID(c, inputProduct, uint(productID))
 
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"status": "bad request",
+			"error":  err.Error(),
+		})
 		return
 	}
 
@@ -73,6 +88,7 @@ func CreateProducts(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&inputProduct); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
+			"status": "bad request",
 			"errors": helpers.FormatValidationError(err),
 		})
 		return
@@ -94,15 +110,24 @@ func DeleteProduct(c *gin.Context) {
 	productID, err := strconv.Atoi(c.Param("productID"))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": "Invalid parameter",
+			"status": "bad request",
+			"error":  "Invalid parameter",
 		})
 		return
 	}
-	GetByIdProduct(c)
+	_, err = models.GetByIdProduct(c, uint(productID))
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
+			"status": "not found",
+			"error":  err.Error(),
+		})
+		return
+	}
 	err = models.DeleteProductByID(c, uint(productID))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
+			"status": "bad request",
+			"error":  err.Error(),
 		})
 		return
 	}

@@ -2,8 +2,8 @@ package models
 
 import (
 	"context"
-	"errors"
 	"fmt"
+	"sesi_2_authentication_middleware/enums"
 	"sesi_2_authentication_middleware/helpers"
 	"sesi_2_authentication_middleware/input"
 	"time"
@@ -29,10 +29,16 @@ func GetOneProductByUserId(db *pgx.Conn, productID uint) (product Product, err e
 }
 
 func AllProducts(c *gin.Context) (products []Product, err error) {
+	userData := c.MustGet("userData").(*helpers.RoleUserClaims)
 	query := "SELECT * FROM products"
 	rows, err := c.MustGet("db").(*pgx.Conn).Query(context.Background(), query)
+	if userData.Role == enums.User {
+		query = "SELECT * FROM products WHERE user_id = $1"
+		rows, err = c.MustGet("db").(*pgx.Conn).Query(context.Background(), query, userData.ID)
+	}
+
 	if err != nil {
-		return products, err
+		return products, fmt.Errorf("error selecting data : %g", err)
 	}
 
 	defer rows.Close()
@@ -67,7 +73,7 @@ func GetByIdProduct(c *gin.Context, productID uint) (product Product, err error)
 		&product.UpdatedAt,
 	)
 	if err != nil {
-		return product, errors.New("record Data Not Found")
+		return product, fmt.Errorf("product id %v not found", productID)
 	}
 	return product, nil
 }
@@ -97,13 +103,9 @@ func CreateProduct(c *gin.Context, input input.CreateOrUpdateProduct) (product P
 
 func DeleteProductByID(c *gin.Context, productID uint) (err error) {
 	query := "DELETE FROM products WHERE id = $1"
-	res, err := c.MustGet("db").(*pgx.Conn).Exec(context.Background(), query, productID)
+	_, err = c.MustGet("db").(*pgx.Conn).Exec(context.Background(), query, productID)
 	if err != nil {
 		return fmt.Errorf("error deleting data id %g", err)
-	}
-	count := res.RowsAffected()
-	if count == 0 {
-		return fmt.Errorf("product id %v not found", productID)
 	}
 	return nil
 }
@@ -112,22 +114,25 @@ func UpdateProductByID(c *gin.Context, input input.CreateOrUpdateProduct, produc
 	sqlStatement := `
 		UPDATE products
 		SET title = $2, description = $3, updated_at = $4
-		WHERE id = $1;
+		WHERE id = $1 RETURNING *;
 	`
-	product.ID = productID
-	product.Title = input.Title
-	product.Description = input.Description
-	product.UpdatedAt = time.Now()
 
-	res, err := c.MustGet("db").(*pgx.Conn).Exec(context.Background(), sqlStatement, product.ID, product.Title, product.Description)
+	err = c.MustGet("db").(*pgx.Conn).QueryRow(
+		context.Background(),
+		sqlStatement,
+		productID,
+		input.Title,
+		input.Description,
+		time.Now()).Scan(
+		&product.ID,
+		&product.Title,
+		&product.Description,
+		&product.UserID,
+		&product.CreatedAt,
+		&product.UpdatedAt,
+	)
 	if err != nil {
 		return product, fmt.Errorf("error updating data %g", err)
-	}
-
-	count := res.RowsAffected()
-
-	if count == 0 {
-		return product, fmt.Errorf("record data not found")
 	}
 
 	return product, nil

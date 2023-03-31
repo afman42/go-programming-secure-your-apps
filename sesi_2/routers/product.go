@@ -17,6 +17,7 @@ func SetupProductRouters(r *gin.Engine) {
 		productAdminRouter.GET("/:productID", controllers.GetByIdProduct)
 		productAdminRouter.POST("/", controllers.CreateProducts)
 		productAdminRouter.PUT("/:productID", controllers.EditProduct)
+		productAdminRouter.DELETE("/:productID", controllers.DeleteProduct)
 
 		productUserRouter := products.Group("/user")
 		productUserRouter.GET("/:productId", middlewares.ProductAuthentication(), controllers.GetByIdProduct)
