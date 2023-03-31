@@ -1,7 +1,6 @@
 package middlewares
 
 import (
-	"fmt"
 	"net/http"
 	"sesi_2_authentication_middleware/enums"
 	"sesi_2_authentication_middleware/helpers"
@@ -26,8 +25,7 @@ func Authentication() gin.HandlerFunc {
 			return
 		}
 		verRoleUser := verifyToken.(*helpers.RoleUserClaims).Role
-		fmt.Println(verRoleUser == enums.Admin)
-		if strings.Contains(string(verRoleUser), string(enums.Admin)) {
+		if !strings.Contains(c.Request.URL.Path, string(verRoleUser)) {
 			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
 				"error":   "Forbidden",
 				"message": "Your Role is not allowed",

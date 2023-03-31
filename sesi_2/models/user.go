@@ -12,7 +12,7 @@ import (
 )
 
 type User struct {
-	GormModel
+	BaseModel
 	Email    string
 	Password string
 	Role     enums.RoleUser `sql:"type:enum('admin','user')"`

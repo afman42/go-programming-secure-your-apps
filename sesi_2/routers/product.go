@@ -14,13 +14,13 @@ func SetupProductRouters(r *gin.Engine) {
 
 		productAdminRouter := products.Group("/admin")
 		productAdminRouter.GET("/", controllers.AllProducts)
-		productAdminRouter.GET("/:productId", controllers.GetByIdProduct)
+		productAdminRouter.GET("/:productID", controllers.GetByIdProduct)
 		productAdminRouter.POST("/", controllers.CreateProducts)
-		productAdminRouter.PUT("/:productId", controllers.EditProduct)
+		productAdminRouter.PUT("/:productID", controllers.EditProduct)
 
 		productUserRouter := products.Group("/user")
 		productUserRouter.GET("/:productId", middlewares.ProductAuthentication(), controllers.GetByIdProduct)
-		// productUserRouter.GET("/", middlewares.ProductAuthentication(), controllers.AllProducts)
-		productUserRouter.POST("/", middlewares.ProductAuthentication(), controllers.CreateProducts)
+		productUserRouter.GET("/", controllers.AllProducts)
+		productUserRouter.POST("/", controllers.CreateProducts)
 	}
 }
