@@ -1,0 +1,190 @@
+definitions:
+  helpers.ApiError:
+    properties:
+      field:
+        type: string
+      message:
+        type: string
+      tag:
+        type: string
+      value:
+        type: string
+    type: object
+  helpers.JSONResult200:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  helpers.JSONResult400:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  helpers.JSONResult401:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  helpers.JSONResult422:
+    properties:
+      code:
+        type: integer
+      errors:
+        items:
+          $ref: '#/definitions/helpers.ApiError'
+        type: array
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  user.LoginInput:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  user.RegisterUserInput:
+    properties:
+      age:
+        type: integer
+      email:
+        type: string
+      password:
+        minLength: 6
+        type: string
+      username:
+        type: string
+    required:
+    - age
+    - email
+    - password
+    - username
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+paths:
+  /api/login:
+    post:
+      consumes:
+      - application/json
+      description: get token for login
+      parameters:
+      - description: Auth Login
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/user.LoginInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.JSONResult200'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.JSONResult400'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/helpers.JSONResult422'
+      summary: user login
+      tags:
+      - authentication
+  /api/register:
+    post:
+      consumes:
+      - application/json
+      description: create user
+      parameters:
+      - description: Auth Register
+        in: body
+        name: register
+        required: true
+        schema:
+          $ref: '#/definitions/user.RegisterUserInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.JSONResult200'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.JSONResult400'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/helpers.JSONResult422'
+      summary: user register
+      tags:
+      - authentication
+  /api/social_media:
+    get:
+      consumes:
+      - application/json
+      description: get all socialmedia by user id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.JSONResult200'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.JSONResult400'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.JSONResult401'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/helpers.JSONResult422'
+      security:
+      - Bearer: []
+      summary: get all socialmedia by user id
+      tags:
+      - socialmedia
+securityDefinitions:
+  Bearer:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
