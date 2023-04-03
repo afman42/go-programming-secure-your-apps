@@ -2,14 +2,16 @@ package socialmedia
 
 import (
 	"sesi_4_final_project/models"
+	"time"
 )
 
 type Service interface {
-	CreateSocialMedia(input CreateSocialMediaInput, userIDd uint) (models.SocialMedia, error)
+	CreateSocialMedia(input CreateSocialMediaInput, userID uint) (models.SocialMedia, error)
 	GetAll(userID uint) ([]models.SocialMedia, error)
 	GetOne(socialMediaID uint) (models.SocialMedia, error)
-	UpdateSocialMedia(socialMediaID uint, input CreateSocialMediaInput) (models.SocialMedia, error)
-	DeleteSocialMedia(socialMediaID uint) error
+	UpdateSocialMedia(socialMediaID uint, input CreateSocialMediaInput, userID uint) (models.SocialMedia, error)
+	DeleteSocialMedia(socialMediaID uint, userID uint) error
+	GetOneByUserID(socialMediaID uint, userID uint) (models.SocialMedia, error)
 }
 
 type service struct {
@@ -43,6 +45,15 @@ func (s *service) GetAll(userID uint) ([]models.SocialMedia, error) {
 	return socialmedias, nil
 }
 
+func (s *service) GetOneByUserID(socialMediaID uint, userID uint) (models.SocialMedia, error) {
+	socialmedia, err := s.repository.FindByUserID(socialMediaID, userID)
+	if err != nil {
+		return models.SocialMedia{}, err
+	}
+
+	return socialmedia, nil
+}
+
 func (s *service) GetOne(socialMediaID uint) (models.SocialMedia, error) {
 	socialmedia, err := s.repository.FindByID(socialMediaID)
 	if err != nil {
@@ -52,14 +63,16 @@ func (s *service) GetOne(socialMediaID uint) (models.SocialMedia, error) {
 	return socialmedia, nil
 }
 
-func (s *service) UpdateSocialMedia(socialMediaID uint, inputData CreateSocialMediaInput) (models.SocialMedia, error) {
-	socialmedia, err := s.repository.FindByID(socialMediaID)
+func (s *service) UpdateSocialMedia(socialMediaID uint, inputData CreateSocialMediaInput, userID uint) (models.SocialMedia, error) {
+	socialmedia, err := s.repository.FindByUserID(socialMediaID, userID)
 	if err != nil {
 		return socialmedia, err
 	}
+	t := time.Now()
 
 	socialmedia.Name = inputData.Name
 	socialmedia.SocialMediaUrl = inputData.SocialMediaUrl
+	socialmedia.UpdatedAt = &t
 
 	updatedSocialMedia, err := s.repository.Update(socialmedia)
 	if err != nil {
@@ -69,6 +82,6 @@ func (s *service) UpdateSocialMedia(socialMediaID uint, inputData CreateSocialMe
 	return updatedSocialMedia, nil
 }
 
-func (s *service) DeleteSocialMedia(socialMediaID uint) error {
-	return s.repository.DeleteByID(socialMediaID)
+func (s *service) DeleteSocialMedia(socialMediaID uint, userID uint) error {
+	return s.repository.DeleteByID(socialMediaID, userID)
 }

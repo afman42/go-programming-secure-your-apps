@@ -27,3 +27,10 @@ type JSONResult401 struct {
 	Status  string      `json:"status"`
 	Data    interface{} `json:"data"`
 }
+
+type JSONResult404 struct {
+	Message string      `json:"message"`
+	Code    int         `json:"code"`
+	Status  string      `json:"status"`
+	Data    interface{} `json:"data"`
+}

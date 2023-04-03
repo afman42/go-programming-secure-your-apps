@@ -160,6 +160,219 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "create socialmedia by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "socialmedia"
+                ],
+                "summary": "create socialmedia by user id",
+                "parameters": [
+                    {
+                        "description": "Create Social Media",
+                        "name": "createSocialMedia",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/socialmedia.CreateSocialMediaInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.JSONResult200"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.JSONResult400"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.JSONResult401"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.JSONResult422"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/social_media/{socialMediaID}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "get one socialmedia by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "socialmedia"
+                ],
+                "summary": "get one socialmedia by user id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "socialMediaID",
+                        "name": "socialMediaID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.JSONResult200"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.JSONResult400"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.JSONResult404"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "update socialmedia by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "socialmedia"
+                ],
+                "summary": "update socialmedia by user id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "socialMediaID",
+                        "name": "socialMediaID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Update Social Media",
+                        "name": "updateSocialMedia",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/socialmedia.CreateSocialMediaInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.JSONResult200"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.JSONResult400"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.JSONResult401"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.JSONResult404"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "delete socialmedia by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "socialmedia"
+                ],
+                "summary": "delete socialmedia by user id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "socialMediaID",
+                        "name": "socialMediaID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.JSONResult200"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.JSONResult400"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.JSONResult404"
+                        }
+                    }
+                }
             }
         }
     },
@@ -226,6 +439,21 @@ const docTemplate = `{
                 }
             }
         },
+        "helpers.JSONResult404": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {},
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
         "helpers.JSONResult422": {
             "type": "object",
             "properties": {
@@ -246,6 +474,23 @@ const docTemplate = `{
                 }
             }
         },
+        "socialmedia.CreateSocialMediaInput": {
+            "type": "object",
+            "required": [
+                "name",
+                "social_media_url"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "example": ""
+                },
+                "social_media_url": {
+                    "type": "string",
+                    "example": ""
+                }
+            }
+        },
         "user.LoginInput": {
             "type": "object",
             "required": [
@@ -254,10 +499,12 @@ const docTemplate = `{
             ],
             "properties": {
                 "email": {
-                    "type": "string"
+                    "type": "string",
+                    "example": ""
                 },
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "example": ""
                 }
             }
         },
@@ -271,17 +518,21 @@ const docTemplate = `{
             ],
             "properties": {
                 "age": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 0
                 },
                 "email": {
-                    "type": "string"
+                    "type": "string",
+                    "example": ""
                 },
                 "password": {
                     "type": "string",
-                    "minLength": 6
+                    "minLength": 6,
+                    "example": ""
                 },
                 "username": {
-                    "type": "string"
+                    "type": "string",
+                    "example": ""
                 }
             }
         }

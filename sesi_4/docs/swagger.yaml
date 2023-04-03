@@ -40,6 +40,16 @@ definitions:
       status:
         type: string
     type: object
+  helpers.JSONResult404:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+      status:
+        type: string
+    type: object
   helpers.JSONResult422:
     properties:
       code:
@@ -53,11 +63,25 @@ definitions:
       status:
         type: string
     type: object
+  socialmedia.CreateSocialMediaInput:
+    properties:
+      name:
+        example: ""
+        type: string
+      social_media_url:
+        example: ""
+        type: string
+    required:
+    - name
+    - social_media_url
+    type: object
   user.LoginInput:
     properties:
       email:
+        example: ""
         type: string
       password:
+        example: ""
         type: string
     required:
     - email
@@ -66,13 +90,17 @@ definitions:
   user.RegisterUserInput:
     properties:
       age:
+        example: 0
         type: integer
       email:
+        example: ""
         type: string
       password:
+        example: ""
         minLength: 6
         type: string
       username:
+        example: ""
         type: string
     required:
     - age
@@ -179,6 +207,142 @@ paths:
       security:
       - Bearer: []
       summary: get all socialmedia by user id
+      tags:
+      - socialmedia
+    post:
+      consumes:
+      - application/json
+      description: create socialmedia by user id
+      parameters:
+      - description: Create Social Media
+        in: body
+        name: createSocialMedia
+        required: true
+        schema:
+          $ref: '#/definitions/socialmedia.CreateSocialMediaInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.JSONResult200'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.JSONResult400'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.JSONResult401'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/helpers.JSONResult422'
+      security:
+      - Bearer: []
+      summary: create socialmedia by user id
+      tags:
+      - socialmedia
+  /api/social_media/{socialMediaID}:
+    delete:
+      consumes:
+      - application/json
+      description: delete socialmedia by user id
+      parameters:
+      - description: socialMediaID
+        in: path
+        name: socialMediaID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.JSONResult200'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.JSONResult400'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.JSONResult404'
+      security:
+      - Bearer: []
+      summary: delete socialmedia by user id
+      tags:
+      - socialmedia
+    get:
+      consumes:
+      - application/json
+      description: get one socialmedia by user id
+      parameters:
+      - description: socialMediaID
+        in: path
+        name: socialMediaID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.JSONResult200'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.JSONResult400'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.JSONResult404'
+      security:
+      - Bearer: []
+      summary: get one socialmedia by user id
+      tags:
+      - socialmedia
+    put:
+      consumes:
+      - application/json
+      description: update socialmedia by user id
+      parameters:
+      - description: socialMediaID
+        in: path
+        name: socialMediaID
+        required: true
+        type: integer
+      - description: Update Social Media
+        in: body
+        name: updateSocialMedia
+        required: true
+        schema:
+          $ref: '#/definitions/socialmedia.CreateSocialMediaInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.JSONResult200'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.JSONResult400'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.JSONResult401'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.JSONResult404'
+      security:
+      - Bearer: []
+      summary: update socialmedia by user id
       tags:
       - socialmedia
 securityDefinitions:

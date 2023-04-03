@@ -59,5 +59,9 @@ func main() {
 
 	socialMediaApi := api.Group("/social_media")
 	socialMediaApi.GET("/", middlewares.AuthMiddleware(authService, userService), socialMediaHandler.GetAllSocialMedia)
+	socialMediaApi.GET("/:socialMediaID", middlewares.AuthMiddleware(authService, userService), socialMediaHandler.GetOneSocialMedia)
+	socialMediaApi.POST("/", middlewares.AuthMiddleware(authService, userService), socialMediaHandler.CreateSocialMedia)
+	socialMediaApi.PUT("/:socialMediaID", middlewares.AuthMiddleware(authService, userService), middlewares.AuthorizationSocialMediaByUserID(socialMediaService), socialMediaHandler.UpdateSocialMedia)
+	socialMediaApi.DELETE("/:socialMediaID", middlewares.AuthMiddleware(authService, userService), middlewares.AuthorizationSocialMediaByUserID(socialMediaService), socialMediaHandler.DeleteSocialMedia)
 	r.Run(":8080")
 }
