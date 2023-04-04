@@ -4,40 +4,40 @@ import (
 	"net/http"
 	"sesi_4_final_project/helpers"
 	"sesi_4_final_project/models"
-	"sesi_4_final_project/socialmedia"
+	"sesi_4_final_project/photo"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
-type socialMediaHandler struct {
-	socialMediaService socialmedia.Service
+type photoHandler struct {
+	photoService photo.Service
 }
 
-func NewSocialMediaHandler(socialMediaService socialmedia.Service) *socialMediaHandler {
-	return &socialMediaHandler{socialMediaService}
+func NewPhotoHandler(photoService photo.Service) *photoHandler {
+	return &photoHandler{photoService}
 }
 
-// GetAllSocialMedia godoc
-// @Summary      get all socialmedia by user id
-// @Description  get all socialmedia by user id
-// @Tags         socialmedia
+// GetAllPhoto godoc
+// @Summary      get all photo by user id
+// @Description  get all photo by user id
+// @Tags         photo
 // @Accept       json
 // @Produce      json
 // @Success      200  {object} 	helpers.JSONResult200
 // @Failure		 422  {object}  helpers.JSONResult422
 // @Failure		 400  {object}  helpers.JSONResult400
 // @Failure		 401  {object}  helpers.JSONResult401
-// @Router       /api/social_media/ [get]
+// @Router       /api/photo [get]
 // @Security Bearer
-func (h *socialMediaHandler) GetAllSocialMedia(c *gin.Context) {
+func (h *photoHandler) GetAllPhoto(c *gin.Context) {
 	userData := c.MustGet("userData").(models.User)
 	currentUser := userData.ID
-	socialmedias, err := h.socialMediaService.GetAll(currentUser)
+	photos, err := h.photoService.GetAll(currentUser)
 
 	if err != nil {
 		response := helpers.JSONResult400{
-			Message: "Get All Social Media Failed",
+			Message: "Get All Photos Failed",
 			Code:    http.StatusBadRequest,
 			Status:  "error",
 			Data:    nil,
@@ -47,36 +47,36 @@ func (h *socialMediaHandler) GetAllSocialMedia(c *gin.Context) {
 	}
 
 	response := helpers.JSONResult200{
-		Message: "Get All Social Media By User",
+		Message: "Get All Photos By User",
 		Code:    http.StatusOK,
 		Status:  "success",
-		Data:    socialmedias,
+		Data:    photos,
 	}
 	c.JSON(http.StatusOK, response)
 }
 
-// CreateSocialMedia godoc
+// CreatePhoto godoc
 // @Summary      create socialmedia by user id
 // @Description  create socialmedia by user id
-// @Tags         socialmedia
+// @Tags         photo
 // @Accept       json
 // @Produce      json
-// @Param		 createSocialMedia	body socialmedia.CreateSocialMediaInput	true "Create Social Media"
+// @Param		 createPhoto	body photo.CreatePhotoInput	true "Create Photo"
 // @Success      200  {object} 	helpers.JSONResult200
 // @Failure		 422  {object}  helpers.JSONResult422
 // @Failure		 400  {object}  helpers.JSONResult400
 // @Failure		 401  {object}  helpers.JSONResult401
-// @Router       /api/social_media [post]
-// @Security Bearer
-func (h *socialMediaHandler) CreateSocialMedia(c *gin.Context) {
-	var input socialmedia.CreateSocialMediaInput
+// @Router       /api/photo [post]
+// @Security 	 Bearer
+func (h *photoHandler) CreatePhoto(c *gin.Context) {
+	var input photo.CreatePhotoInput
 	userData := c.MustGet("userData").(models.User)
 	currentUser := userData.ID
 
 	err := c.ShouldBindJSON(&input)
 	if err != nil {
 		response := helpers.JSONResult422{
-			Message: "Create social media failed",
+			Message: "Create photo failed",
 			Code:    http.StatusUnprocessableEntity,
 			Status:  "error",
 			Errors:  helpers.FormatValidationError(err),
@@ -85,11 +85,11 @@ func (h *socialMediaHandler) CreateSocialMedia(c *gin.Context) {
 		return
 	}
 
-	newSocialMedia, err := h.socialMediaService.CreateSocialMedia(input, currentUser)
+	newPhoto, err := h.photoService.CreatePhoto(input, currentUser)
 
 	if err != nil {
 		response := helpers.JSONResult400{
-			Message: "Cannot Create Social Media",
+			Message: err.Error(),
 			Code:    http.StatusBadRequest,
 			Status:  "error",
 			Data:    nil,
@@ -99,28 +99,28 @@ func (h *socialMediaHandler) CreateSocialMedia(c *gin.Context) {
 	}
 
 	response := helpers.JSONResult200{
-		Message: "Success Create Social Media By User",
+		Message: "Success Create Photo By User",
 		Code:    http.StatusOK,
 		Status:  "success",
-		Data:    newSocialMedia,
+		Data:    newPhoto,
 	}
 	c.JSON(http.StatusOK, response)
 }
 
-// GetOneSocialMedia godoc
-// @Summary      get one socialmedia by user id
-// @Description  get one socialmedia by user id
-// @Tags         socialmedia
+// GetOnePhoto godoc
+// @Summary      get one photo by user id
+// @Description  get one photo by user id
+// @Tags         photo
 // @Accept       json
 // @Produce      json
-// @Param 		 socialMediaID  path int true "socialMediaID"
+// @Param 		 photoID  path int true "photoID"
 // @Success      200  {object} 	helpers.JSONResult200
 // @Failure		 400  {object}  helpers.JSONResult400
 // @Failure		 404  {object}  helpers.JSONResult404
-// @Router       /api/social_media/{socialMediaID} [get]
+// @Router       /api/photo/{photoID} [get]
 // @Security Bearer
-func (h *socialMediaHandler) GetOneSocialMedia(c *gin.Context) {
-	socialMediaID, err := strconv.Atoi(c.Param("socialMediaID"))
+func (h *photoHandler) GetOnePhoto(c *gin.Context) {
+	photoID, err := strconv.Atoi(c.Param("photoID"))
 	if err != nil {
 		response := helpers.JSONResult400{
 			Message: "Invalid Parameter",
@@ -132,7 +132,7 @@ func (h *socialMediaHandler) GetOneSocialMedia(c *gin.Context) {
 		return
 	}
 
-	socialMedia, err := h.socialMediaService.GetOne(uint(socialMediaID))
+	photo, err := h.photoService.GetOne(uint(photoID))
 
 	if err != nil {
 		response := helpers.JSONResult404{
@@ -146,32 +146,32 @@ func (h *socialMediaHandler) GetOneSocialMedia(c *gin.Context) {
 	}
 
 	response := helpers.JSONResult200{
-		Message: "Get One Social Media By User",
+		Message: "Get One Photo By User",
 		Code:    http.StatusOK,
 		Status:  "success",
-		Data:    socialMedia,
+		Data:    photo,
 	}
 	c.JSON(http.StatusOK, response)
 }
 
-// DeleteSocialMedia godoc
-// @Summary      delete socialmedia by user id
-// @Description  delete socialmedia by user id
-// @Tags         socialmedia
+// DeletePhoto godoc
+// @Summary      delete photo by user id
+// @Description  delete photo by user id
+// @Tags         photo
 // @Accept       json
 // @Produce      json
-// @Param 		 socialMediaID  path int true "socialMediaID"
+// @Param 		 photoID  path int true "photoID"
 // @Success      200  {object} 	helpers.JSONResult200
 // @Failure		 400  {object}  helpers.JSONResult400
 // @Failure		 404  {object}  helpers.JSONResult404
-// @Router       /api/social_media/{socialMediaID} [delete]
+// @Router       /api/photo/{photoID} [delete]
 // @Security Bearer
-func (h *socialMediaHandler) DeleteSocialMedia(c *gin.Context) {
+func (h *photoHandler) DeletePhoto(c *gin.Context) {
 	userData := c.MustGet("userData").(models.User)
 	currentUser := userData.ID
-	socialMediaID, _ := strconv.Atoi(c.Param("socialMediaID"))
+	photoID, _ := strconv.Atoi(c.Param("photoID"))
 
-	err := h.socialMediaService.DeleteSocialMedia(uint(socialMediaID), currentUser)
+	err := h.photoService.DeletePhoto(uint(photoID), currentUser)
 
 	if err != nil {
 		response := helpers.JSONResult404{
@@ -185,7 +185,7 @@ func (h *socialMediaHandler) DeleteSocialMedia(c *gin.Context) {
 	}
 
 	response := helpers.JSONResult200{
-		Message: "Succesfully Delete Social Media By User",
+		Message: "Succesfully Delete photo By User",
 		Code:    http.StatusOK,
 		Status:  "success",
 		Data:    nil,
@@ -193,29 +193,29 @@ func (h *socialMediaHandler) DeleteSocialMedia(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-// UpdateSocialMedia godoc
-// @Summary      update socialmedia by user id
-// @Description  update socialmedia by user id
-// @Tags         socialmedia
+// UpdatePhoto godoc
+// @Summary      update photo by user id
+// @Description  update photo by user id
+// @Tags         photo
 // @Accept       json
 // @Produce      json
-// @Param 		 socialMediaID  path int true "socialMediaID"
-// @Param		 updateSocialMedia	body socialmedia.CreateSocialMediaInput	true "Update Social Media"
+// @Param 		 photoID  path int true "photoID"
+// @Param		 updatePhoto	body photo.CreatePhotoInput	true "Update Photo"
 // @Success      200  {object} 	helpers.JSONResult200
 // @Failure		 400  {object}  helpers.JSONResult400
 // @Failure		 404  {object}  helpers.JSONResult404
 // @Failure		 401  {object}  helpers.JSONResult401
-// @Router       /api/social_media/{socialMediaID} [put]
+// @Router       /api/photo/{photoID} [put]
 // @Security Bearer
-func (h *socialMediaHandler) UpdateSocialMedia(c *gin.Context) {
-	var input socialmedia.CreateSocialMediaInput
+func (h *photoHandler) UpdatePhoto(c *gin.Context) {
+	var input photo.CreatePhotoInput
 	userData := c.MustGet("userData").(models.User)
 	currentUser := userData.ID
-	socialMediaID, _ := strconv.Atoi(c.Param("socialMediaID"))
+	photoID, _ := strconv.Atoi(c.Param("photoID"))
 	err := c.ShouldBindJSON(&input)
 	if err != nil {
 		response := helpers.JSONResult422{
-			Message: "Cannot update social media failed",
+			Message: "Cannot update photo failed",
 			Code:    http.StatusUnprocessableEntity,
 			Status:  "error",
 			Errors:  helpers.FormatValidationError(err),
@@ -224,7 +224,7 @@ func (h *socialMediaHandler) UpdateSocialMedia(c *gin.Context) {
 		return
 	}
 
-	updateSocialMedia, err := h.socialMediaService.UpdateSocialMedia(uint(socialMediaID), input, currentUser)
+	updatePhoto, err := h.photoService.UpdatePhoto(uint(photoID), input, currentUser)
 
 	if err != nil {
 		response := helpers.JSONResult400{
@@ -238,10 +238,10 @@ func (h *socialMediaHandler) UpdateSocialMedia(c *gin.Context) {
 	}
 
 	response := helpers.JSONResult200{
-		Message: "Succesfully Update Social Media By User",
+		Message: "Succesfully Update photo By User",
 		Code:    http.StatusOK,
 		Status:  "success",
-		Data:    updateSocialMedia,
+		Data:    updatePhoto,
 	}
 	c.JSON(http.StatusOK, response)
 }

@@ -1,4 +1,12 @@
 definitions:
+  comments.CreateCommentInput:
+    properties:
+      message:
+        example: ""
+        type: string
+    required:
+    - message
+    type: object
   helpers.ApiError:
     properties:
       field:
@@ -63,6 +71,21 @@ definitions:
       status:
         type: string
     type: object
+  photo.CreatePhotoInput:
+    properties:
+      caption:
+        example: ""
+        type: string
+      photo_url:
+        example: ""
+        type: string
+      title:
+        example: ""
+        type: string
+    required:
+    - photo_url
+    - title
+    type: object
   socialmedia.CreateSocialMediaInput:
     properties:
       name:
@@ -120,6 +143,197 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 paths:
+  /api/comment/{photoID}:
+    get:
+      consumes:
+      - application/json
+      description: get all comments by user id
+      parameters:
+      - description: photoID
+        in: path
+        name: photoID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.JSONResult200'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.JSONResult400'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.JSONResult401'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/helpers.JSONResult422'
+      security:
+      - Bearer: []
+      summary: get all comments by user id
+      tags:
+      - comment
+    post:
+      consumes:
+      - application/json
+      description: create comment by user id and photo id
+      parameters:
+      - description: photoID
+        in: path
+        name: photoID
+        required: true
+        type: integer
+      - description: Create Social Media
+        in: body
+        name: createComment
+        required: true
+        schema:
+          $ref: '#/definitions/comments.CreateCommentInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.JSONResult200'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.JSONResult400'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.JSONResult401'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/helpers.JSONResult422'
+      security:
+      - Bearer: []
+      summary: create comment by user id and photo id
+      tags:
+      - comment
+  /api/comment/{photoID}/{commentID}:
+    delete:
+      consumes:
+      - application/json
+      description: delete comment by user id and photo id
+      parameters:
+      - description: photoID
+        in: path
+        name: photoID
+        required: true
+        type: integer
+      - description: commentID
+        in: path
+        name: commentID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.JSONResult200'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.JSONResult400'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.JSONResult404'
+      security:
+      - Bearer: []
+      summary: delete comment by user id and photo id
+      tags:
+      - comment
+    get:
+      consumes:
+      - application/json
+      description: get one comment by user id
+      parameters:
+      - description: photoID
+        in: path
+        name: photoID
+        required: true
+        type: integer
+      - description: commentID
+        in: path
+        name: commentID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.JSONResult200'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.JSONResult400'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.JSONResult404'
+      security:
+      - Bearer: []
+      summary: get one comment by user id
+      tags:
+      - comment
+    put:
+      consumes:
+      - application/json
+      description: update comment by user id
+      parameters:
+      - description: photoID
+        in: path
+        name: photoID
+        required: true
+        type: integer
+      - description: commentID
+        in: path
+        name: commentID
+        required: true
+        type: integer
+      - description: Update Comment
+        in: body
+        name: updateComment
+        required: true
+        schema:
+          $ref: '#/definitions/comments.CreateCommentInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.JSONResult200'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.JSONResult400'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.JSONResult401'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.JSONResult404'
+      security:
+      - Bearer: []
+      summary: update comment by user id
+      tags:
+      - comment
   /api/login:
     post:
       consumes:
@@ -150,6 +364,171 @@ paths:
       summary: user login
       tags:
       - authentication
+  /api/photo:
+    get:
+      consumes:
+      - application/json
+      description: get all photo by user id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.JSONResult200'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.JSONResult400'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.JSONResult401'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/helpers.JSONResult422'
+      security:
+      - Bearer: []
+      summary: get all photo by user id
+      tags:
+      - photo
+    post:
+      consumes:
+      - application/json
+      description: create socialmedia by user id
+      parameters:
+      - description: Create Photo
+        in: body
+        name: createPhoto
+        required: true
+        schema:
+          $ref: '#/definitions/photo.CreatePhotoInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.JSONResult200'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.JSONResult400'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.JSONResult401'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/helpers.JSONResult422'
+      security:
+      - Bearer: []
+      summary: create socialmedia by user id
+      tags:
+      - photo
+  /api/photo/{photoID}:
+    delete:
+      consumes:
+      - application/json
+      description: delete photo by user id
+      parameters:
+      - description: photoID
+        in: path
+        name: photoID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.JSONResult200'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.JSONResult400'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.JSONResult404'
+      security:
+      - Bearer: []
+      summary: delete photo by user id
+      tags:
+      - photo
+    get:
+      consumes:
+      - application/json
+      description: get one photo by user id
+      parameters:
+      - description: photoID
+        in: path
+        name: photoID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.JSONResult200'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.JSONResult400'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.JSONResult404'
+      security:
+      - Bearer: []
+      summary: get one photo by user id
+      tags:
+      - photo
+    put:
+      consumes:
+      - application/json
+      description: update photo by user id
+      parameters:
+      - description: photoID
+        in: path
+        name: photoID
+        required: true
+        type: integer
+      - description: Update Photo
+        in: body
+        name: updatePhoto
+        required: true
+        schema:
+          $ref: '#/definitions/photo.CreatePhotoInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.JSONResult200'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.JSONResult400'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.JSONResult401'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.JSONResult404'
+      security:
+      - Bearer: []
+      summary: update photo by user id
+      tags:
+      - photo
   /api/register:
     post:
       consumes:
@@ -181,34 +560,6 @@ paths:
       tags:
       - authentication
   /api/social_media:
-    get:
-      consumes:
-      - application/json
-      description: get all socialmedia by user id
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/helpers.JSONResult200'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/helpers.JSONResult400'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/helpers.JSONResult401'
-        "422":
-          description: Unprocessable Entity
-          schema:
-            $ref: '#/definitions/helpers.JSONResult422'
-      security:
-      - Bearer: []
-      summary: get all socialmedia by user id
-      tags:
-      - socialmedia
     post:
       consumes:
       - application/json
@@ -242,6 +593,35 @@ paths:
       security:
       - Bearer: []
       summary: create socialmedia by user id
+      tags:
+      - socialmedia
+  /api/social_media/:
+    get:
+      consumes:
+      - application/json
+      description: get all socialmedia by user id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helpers.JSONResult200'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.JSONResult400'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.JSONResult401'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/helpers.JSONResult422'
+      security:
+      - Bearer: []
+      summary: get all socialmedia by user id
       tags:
       - socialmedia
   /api/social_media/{socialMediaID}:
