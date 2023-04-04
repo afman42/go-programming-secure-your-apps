@@ -54,7 +54,7 @@ func (r *repository) FindByUserID(ID uint, userID uint) (models.Photo, error) {
 func (r *repository) FindByID(ID uint) (models.Photo, error) {
 	var photo models.Photo
 
-	result := r.db.Where("id = ?", ID).Find(&photo)
+	result := r.db.Where("id = ?", ID).Preload("User").Find(&photo)
 	err := result.Error
 	if err != nil {
 		return photo, err
@@ -82,7 +82,7 @@ func (r *repository) Update(comment models.Photo) (models.Photo, error) {
 func (r *repository) FindAll(userID uint) ([]models.Photo, error) {
 	var photos []models.Photo
 
-	err := r.db.Where("user_id = ?", userID).Find(&photos).Error
+	err := r.db.Where("user_id = ?", userID).Preload("User").Find(&photos).Error
 	if err != nil {
 		return photos, err
 	}

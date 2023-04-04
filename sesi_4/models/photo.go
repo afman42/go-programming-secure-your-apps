@@ -6,4 +6,5 @@ type Photo struct {
 	UserID   uint   `gorm:"not null" json:"user_id"`
 	Caption  string `gorm:"null" json:"caption"`
 	PhotoUrl string `gorm:"not null;varchar(191)" json:"photo_url"`
+	User     *User  `json:"user"`
 }
