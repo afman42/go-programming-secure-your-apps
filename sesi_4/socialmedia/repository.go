@@ -1,7 +1,7 @@
 package socialmedia
 
 import (
-	"fmt"
+	"errors"
 	"sesi_4_final_project/models"
 
 	"gorm.io/gorm"
@@ -45,7 +45,7 @@ func (r *repository) FindByUserID(ID uint, userID uint) (models.SocialMedia, err
 	count := result.RowsAffected
 
 	if count == 0 {
-		return socialmedia, fmt.Errorf("cannot find id %d social media", ID)
+		return socialmedia, errors.New("cannot find row")
 	}
 
 	return socialmedia, nil
@@ -63,7 +63,7 @@ func (r *repository) FindByID(ID uint) (models.SocialMedia, error) {
 	count := result.RowsAffected
 
 	if count == 0 {
-		return socialmedia, fmt.Errorf("cannot find id %d social media", ID)
+		return socialmedia, errors.New("cannot find row")
 	}
 
 	return socialmedia, nil
@@ -99,7 +99,7 @@ func (r *repository) DeleteByID(ID uint, userID uint) error {
 	}
 	count := result.RowsAffected
 	if count == 0 {
-		return fmt.Errorf("cannot find id %d social media", ID)
+		return errors.New("cannot find row")
 	}
 	return nil
 }

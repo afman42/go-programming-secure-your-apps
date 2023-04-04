@@ -89,7 +89,7 @@ func (h *socialMediaHandler) CreateSocialMedia(c *gin.Context) {
 
 	if err != nil {
 		response := helpers.JSONResult400{
-			Message: "Cannot Create Social Media",
+			Message: err.Error(),
 			Code:    http.StatusBadRequest,
 			Status:  "error",
 			Data:    nil,
