@@ -54,7 +54,7 @@ func (r *repository) FindByUserID(ID uint, userID uint) (models.SocialMedia, err
 func (r *repository) FindByID(ID uint) (models.SocialMedia, error) {
 	var socialmedia models.SocialMedia
 
-	result := r.db.Where("id = ?", ID).Find(&socialmedia)
+	result := r.db.Where("id = ?", ID).Preload("User").Find(&socialmedia)
 	err := result.Error
 	if err != nil {
 		return socialmedia, err
