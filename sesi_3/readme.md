@@ -1,0 +1,1 @@
+Tugas Powerpoint: https://docs.google.com/presentation/d/1eDl5Zz6TS-2zAzQJUicqpKp1Tjl0u1dZlD9kYSxyaCA/edit?usp=sharing
