@@ -42,6 +42,8 @@ func messageValidation(tag string, value string) string {
 		return fmt.Sprintf("This field is must be greater than %s", value)
 	case "email":
 		return "This field is must be format email"
+	case "unique":
+		return "This field is must unique"
 	}
 	return ""
 }

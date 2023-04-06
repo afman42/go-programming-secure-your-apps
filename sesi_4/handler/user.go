@@ -48,7 +48,7 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 
 	if err != nil {
 		response := helpers.JSONResult400{
-			Message: "Register account failed",
+			Message: err.Error(),
 			Code:    http.StatusBadRequest,
 			Status:  "error",
 			Data:    nil,
@@ -108,7 +108,7 @@ func (h *userHandler) Login(c *gin.Context) {
 
 	if err != nil {
 		response := helpers.JSONResult422{
-			Message: "Login failed",
+			Message: err.Error(),
 			Code:    http.StatusUnprocessableEntity,
 			Status:  "error",
 			Errors:  helpers.FormatValidationError(err),
