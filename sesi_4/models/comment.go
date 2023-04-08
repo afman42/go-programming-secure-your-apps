@@ -5,5 +5,5 @@ type Comment struct {
 	UserID  uint   `gorm:"not null" json:"user_id"`
 	PhotoID uint   `gorm:"not null" json:"photo_id"`
 	Message string `gorm:"not null" json:"message"`
-	// Product  []Product `gorm:"constraint:OnUpdate:CASCADE,OnDelete:set NULL;" json:"products"`
+	User    *User  `json:"user" gorm:"foreignKey:UserID;references:ID"`
 }
