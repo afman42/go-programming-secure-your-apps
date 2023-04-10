@@ -59,10 +59,10 @@ func postJsonPlaceHolder() {
 
 func randomNumber() {
 	randIntWater, randIntWind, statusWater, statusWind := rand.Intn(100), rand.Intn(100), "aman", "aman"
-	jsonString := `{
-	"water": %d,
-	"wind":%d
-	}`
+	type fields struct {
+		Water int `json:"water"`
+		Wind  int `json:"wind"`
+	}
 
 	if randIntWater >= 6 && randIntWater <= 8 {
 		statusWater = "siaga"
@@ -75,8 +75,13 @@ func randomNumber() {
 	} else if randIntWind > 8 {
 		statusWind = "bahaya"
 	}
-
-	fmt.Printf(jsonString, randIntWater, randIntWind)
+	jsonString := fields{Water: randIntWater, Wind: randIntWind}
+	res, err := json.MarshalIndent(jsonString, "", "  ")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(string(res))
 	fmt.Printf("\n")
 	fmt.Println("status water :", statusWater)
 	fmt.Println("status wind :", statusWind)
